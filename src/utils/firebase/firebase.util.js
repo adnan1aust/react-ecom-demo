@@ -8,9 +8,9 @@ import {getAuth,
         ProviderId,
         createUserWithEmailAndPassword,
         signInWithEmailAndPassword,
-        signOut
+        signOut,
 } from 'firebase/auth';
-import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, setDoc, collection, writeBatch, query, getDocs } from 'firebase/firestore';
 
 
 // Your web app's Firebase configuration
@@ -26,7 +26,6 @@ const firebaseConfig = {
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
 
-
 const provider = new GoogleAuthProvider(firebaseApp);
 provider.setCustomParameters({
     prompt: 'select_account'
@@ -34,9 +33,37 @@ provider.setCustomParameters({
 
 export const auth = getAuth();
 export const singInWithGooglePopup = () => signInWithPopup(auth, provider);
-
 export const db = getFirestore();
 
+//Import data from js file to firebase
+export const addCollectionAndDocuments = async (collectionKey, objectsToAdd ) => {
+	const collectionRef = collection(db, collectionKey);
+	const batch = writeBatch(db);
+
+	objectsToAdd.forEach((object) => {
+		const docRef = doc(collectionRef, object.title.toLowerCase());
+		batch.set(docRef, object);
+	});
+
+	await batch.commit();
+	console.log('data imported!')
+}
+
+//retrive data from firebase categories document
+export const getCategoriesAndDocuments = async () => {
+	const collectionRef = collection(db, 'categories');
+	const q = query(collectionRef);
+
+	const querySnapshot = await getDocs(q);
+	const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot)=> {
+		const {title, items} = docSnapshot.data();
+		acc[title.toLowerCase()] = items;
+		return acc;
+	},{})
+	return categoryMap;
+}
+
+//Create new user during authentication
 export const createUserDocumentFromAuth = async (userAuth, additionalInformation) => {
     const userDocRef = doc(db, 'users', userAuth.uid);
   
@@ -61,6 +88,7 @@ export const createUserDocumentFromAuth = async (userAuth, additionalInformation
     return userDocRef;
 };
 
+//create user with with email and password
 export const createAuthUserWithEmailAndPassword = async (email, password) => {
 	if(!email || !password){
 		console.log('Émail or password is not defined');
@@ -69,6 +97,7 @@ export const createAuthUserWithEmailAndPassword = async (email, password) => {
 	return await createUserWithEmailAndPassword(auth, email, password);
 }
 
+//Sign in user with email and password
 export const signInAuthUserWithEmailAndPassword = async (email, password) => {
 	if(!email || !password){
 		console.log('Émail or password is not defined');
