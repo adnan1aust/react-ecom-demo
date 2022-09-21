@@ -35,7 +35,7 @@ const SignInForm = () => {
         try{
             resetForm();
             if(!email || !password){
-                alert('Please enter email and password')
+                //alert('Please enter email and password')
             } else {
                 await signInAuthUserWithEmailAndPassword(email, password).then((response)=>{
                     const { user } = response;
