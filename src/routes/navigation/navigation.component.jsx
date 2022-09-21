@@ -10,7 +10,7 @@ import {NavigationContainer, LogoContainer, NavigationLinkContainer, NavLink} fr
 
 const Navigation = () => {
 	const { currentUser, setCurrentUser } = useContext(UserContext)
-	const {isCartOpen, setIsCartOpen} = useContext(CartContext);
+	const {isCartOpen} = useContext(CartContext);
 	const signOutHandler = async () => {
 		await signOutUser();
 		setCurrentUser(null);
