@@ -12,7 +12,7 @@ export const CategoriesProvider = ({children}) => {
         const getCategoriesMap = async () => {
             const categoryMap = await getCategoriesAndDocuments();
             setCategoriesMap(categoryMap);
-            console.log('Retrived data',categoryMap)
+            //console.log('Retrived data',categoryMap)
         }
         getCategoriesMap();
     }, [])

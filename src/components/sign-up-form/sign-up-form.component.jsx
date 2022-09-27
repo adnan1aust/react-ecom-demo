@@ -4,6 +4,7 @@ import FormInput from "../form-input/form-input.component";
 import Button from "../button/button.component";
 import './sign-up-form.styles.scss'
 import { UserContext } from "../../contexts/user.context";
+import { useNavigate } from 'react-router-dom';
 
 const defaultFormFields = {
     displayName: '',
@@ -16,11 +17,12 @@ const SignUpForm = () => {
     const [formFields, setFormFields] = useState(defaultFormFields);
     const { displayName, email, password, confirmPassword } = formFields;
     const { setCurrentUser } = useContext(UserContext);
+    const navigate = useNavigate();
 
     //reset form fields
-    const resetForm = () => {
+    /*const resetForm = () => {
         setFormFields(defaultFormFields);
-    }
+    }*/
 
     //handle form submit
     const handleSubmit = async (event) => {
@@ -32,9 +34,9 @@ const SignUpForm = () => {
         const {user}  = await createAuthUserWithEmailAndPassword(email, password)
         setCurrentUser(user);
         await createUserDocumentFromAuth(user, {displayName}).then(()=>{
-            alert('user created successfully');
-            resetForm();
+            navigate('/');
         });
+        console.log('user', user);
     }
 
     const handleChange = (event) => {

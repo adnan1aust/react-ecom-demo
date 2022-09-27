@@ -11,6 +11,11 @@ import {NavigationContainer, LogoContainer, NavigationLinkContainer, NavLink} fr
 const Navigation = () => {
 	const { currentUser, setCurrentUser } = useContext(UserContext)
 	const {isCartOpen} = useContext(CartContext);
+	console.log('current user',currentUser)
+	let displayName  = ''
+	if(currentUser != null) {
+		displayName = currentUser.displayName;
+	}
 	const signOutHandler = async () => {
 		await signOutUser();
 		setCurrentUser(null);
@@ -22,6 +27,7 @@ const Navigation = () => {
                     <CrwnLogo/>
                 </LogoContainer>
                 <NavigationLinkContainer className="nav-links-container">
+					{currentUser ? (<span>Welcome {displayName}</span>):''}
                     <NavLink to='/shop'>Shop</NavLink>
 					{ 
 		  				currentUser ? (<span className='nav-link' onClick={signOutHandler}>Sign Out</span>) : (<Link className='nav-link' to='/auth'>Sign In</Link>)

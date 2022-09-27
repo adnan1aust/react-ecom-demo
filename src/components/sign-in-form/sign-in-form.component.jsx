@@ -4,6 +4,7 @@ import FormInput from "../form-input/form-input.component";
 import Button from "../button/button.component";
 import './sign-in-form.styles.scss'
 import { UserContext } from "../../contexts/user.context";
+import { useNavigate } from 'react-router-dom';
 
 
 const defaultFormFields = {
@@ -15,6 +16,7 @@ const defaultFormFields = {
 const SignInForm = () => {
     const [formFields, setFormFields] = useState(defaultFormFields);
     const { email, password } = formFields;
+    const navigate = useNavigate();
 
     const { setCurrentUser } = useContext(UserContext);
 
@@ -27,6 +29,8 @@ const SignInForm = () => {
 
         const {user} = await singInWithGooglePopup();
         createUserDocumentFromAuth(user);
+        setCurrentUser(user);
+        navigate('/');
     }
 
     //login with email and password
@@ -35,12 +39,12 @@ const SignInForm = () => {
         try{
             resetForm();
             if(!email || !password){
-                //alert('Please enter email and password')
             } else {
                 await signInAuthUserWithEmailAndPassword(email, password).then((response)=>{
                     const { user } = response;
-                    console.log('from sign in', user)
-                    setCurrentUser(user); 
+                    console.log('retrived user', user)
+                    setCurrentUser(user);
+                    navigate('/');
                 })
             }
         }catch(error){
